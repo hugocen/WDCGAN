@@ -23,7 +23,7 @@ opt = parser.parse_args()
 
 
 # parameters
-workers = 4
+workers = 2
 learning_rate = 0.00005
 prior_num = 100
 cuda = True
@@ -43,7 +43,6 @@ image_channel = 3
 
 image_pixels = image_size * image_size * image_channel
 
-log_path = opt.outf + 'log.csv'
 
 
 # make folders
@@ -169,11 +168,11 @@ while True:
         output_d_fake.backward(all_mone_label)
 
         # train with gradient penalty
-        gradient_penalty = calc_gradient_penalty(net_d, data_v.data, fake.data, data.size(0))
-        gradient_penalty.backward()
+        # gradient_penalty = calc_gradient_penalty(net_d, data_v.data, fake.data, data.size(0))
+        # gradient_penalty.backward()
 
 
-        loss_d = output_d_real - output_d_fake + gradient_penalty
+        loss_d = output_d_real - output_d_fake # + gradient_penalty
         wasserstein_d = output_d_real - output_d_fake
 
         optimizer_d.step()
@@ -190,8 +189,8 @@ while True:
         ############################
         # clamp parameters to a cube
         ############################
-        # for p in net_d.parameters():
-        #     p.data.clamp_(clamp_lower, clamp_upper)
+        for p in net_d.parameters():
+            p.data.clamp_(clamp_lower, clamp_upper)
 
 
         ############################
